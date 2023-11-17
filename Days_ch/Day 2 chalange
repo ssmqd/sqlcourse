@@ -1,0 +1,16 @@
+-- Task N1
+SELECT COUNT(*) AS no_of_movie 
+FROM public.film
+WHERE description LIKE '%Saga%'
+AND (title LIKE 'A%' or title LIKE 'R%')
+
+-- Task N2
+SELECT * 
+FROM public.customer
+WHERE first_name LIKE '_A%ER%'
+
+-- Task N3
+SELECT COUNT(*)
+FROM public.payment
+WHERE amount BETWEEN 3.99 AND 7.99 
+AND payment_date BETWEEN '2020-05-01' AND '2020-05-02'
