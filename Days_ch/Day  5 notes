@@ -1,0 +1,32 @@
+SELECT film_id, ROUND(rental_rate / replacement_cost * 100, 2) 
+FROM film
+WHERE rental_rate / replacement_cost * 100 < 4
+ORDER BY ROUND(rental_rate / replacement_cost * 100, 2) 
+
+
+
+SELECT title, 
+CASE
+	WHEN rating in ('PG', 'PG-13') or length > 210 THEN 'tier 1'
+	WHEN description LIKE('%Drama%') and length > 90 THEN 'tier 2'
+	WHEN description LIKE('%Drama%') THEN 'tier 3'
+	WHEN rental_rate < 1 THEN 'tier 4'
+ELSE 'Out of tiers'
+END as cases
+FROM film
+ORDER BY title
+
+SELECT 
+SUM(CASE
+WHEN rating = 'G' THEN 1 ELSE 0 END) as "G",
+SUM(CASE WHEN rating = 'R' THEN 1 ELSE 0END) as "R",
+SUM(CASE WHEN rating = 'NC-17' THEN 1 ELSE 0 END) as "NC-17",
+SUM(CASE WHEN rating = 'PG-13' THEN 1 ELSE 0 END) as "PG-13",
+SUM(CASE WHEN rating = 'PG' THEN 1 ELSE 0 END) as "PG"
+FROM film
+
+
+SELECT rental_date, COALESCE(CAST(return_date as varchar), 'not returned')
+FROM rental
+
+
