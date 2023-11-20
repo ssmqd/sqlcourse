@@ -1,0 +1,28 @@
+SELECT * from bookings
+
+SELECT COUNT(*) as number_of_tickets, 
+CASE
+	WHEN total_amount < 20000 THEN 'Low price'
+	WHEN total_amount < 150000 THEN 'Mid price'
+	WHEN total_amount >= 150000 THEN 'High price'
+ELSE 'no data'
+END as ticket_price
+FROM bookings
+GROUP BY ticket_price
+
+
+
+SELECT COUNT(scheduled_departure),
+CASE
+	WHEN EXTRACT(Mon FROM scheduled_departure) < 3 THEN 'Winter'
+	WHEN EXTRACT(Mon FROM scheduled_departure) < 6 THEN 'Spring'
+	WHEN EXTRACT(Mon FROM scheduled_departure) < 9 THEN 'Summer'
+ELSE 'Fall'
+END as season
+FROM flights
+GROUP BY season
+
+
+
+
+

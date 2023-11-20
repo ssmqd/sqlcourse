@@ -1,0 +1,32 @@
+SELECT COUNT(*), s.seat_no
+FROM seats s
+LEFT JOIN boarding_passes b
+ON s.seat_no = b.seat_no
+GROUP BY 2
+ORDER BY 1 desc
+
+SELECT COUNT(*) as never_booked
+FROM seats s
+LEFT JOIN boarding_passes b
+ON s.seat_no = b.seat_no
+WHERE b.seat_no is null
+
+SELECT COUNT(*), RIGHT(s.seat_no, 1)
+FROM seats s
+LEFT JOIN boarding_passes b
+ON s.seat_no = b.seat_no
+GROUP BY 2
+ORDER BY 1 desc
+
+SELECT COUNT(*), RIGHT(s.seat_no, 1)
+FROM boarding_passes s
+RIGHT JOIN seats b
+ON s.seat_no = b.seat_no
+GROUP BY 2
+ORDER BY 1 desc
+
+
+
+
+
+

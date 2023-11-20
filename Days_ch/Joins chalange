@@ -1,0 +1,27 @@
+SELECT *
+FROM customer
+WHERE first_name = 'GEORGE'
+
+SELECT *
+FROM rental
+WHERE first_name = 'GEORGE'
+
+SELECT *
+FROM inventory
+
+SELECT *
+FROM film
+
+SELECT COUNT(*), film.title, custom.first_name, custom.last_name
+FROM rental as rent
+LEFT JOIN customer custom
+ON rent.customer_id = custom.customer_id
+LEFT JOIN inventory inv
+ON inv.inventory_id = rent.inventory_id
+LEFT JOIN film
+ON film.film_id = inv.film_id
+WHERE first_name = 'GEORGE' and last_name = 'LINTON'
+GROUP BY film.title, custom.first_name, custom.last_name
+ORDER BY 1 desc
+
+
