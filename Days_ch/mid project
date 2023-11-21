@@ -1,0 +1,124 @@
+-- question 1
+SELECT DISTINCT replacement_cost FROM film
+ORDER BY 1 
+
+-- question 2
+SELECT COUNT(*), CASE
+WHEN replacement_cost < 20 THEN 'low'
+WHEN replacement_cost < 25 THEN 'medium'
+ELSE 'high'
+END
+FROM film
+GROUP BY 2
+
+-- question 3
+SELECT * from category
+
+SELECT f.title, f.length, c.name FROM film f
+LEFT JOIN film_category film_c
+ON film_c.film_id = f.film_id
+LEFT JOIN category c
+ON c.category_id = film_c.category_id
+WHERE c.name in ('Sports', 'Drama')
+ORDER BY 2 desc
+
+-- question 4
+SELECT COUNT(*), c.name FROM film f
+LEFT JOIN film_category film_c
+ON film_c.film_id = f.film_id
+LEFT JOIN category c
+ON c.category_id = film_c.category_id
+GROUP BY 2
+ORDER BY 1 DESC
+
+-- question 5
+SELECT COUNT(*), ac.first_name || ' ' || ac.last_name FROM film_actor fa
+LEFT JOIN actor ac
+ON ac.actor_id = fa.actor_id
+GROUP BY 2
+ORDER BY 1 DESC
+
+-- question 6
+SELECT * from address a
+LEFT JOIN customer c
+ON a.address_id = c.address_id
+WHERE c.first_name is null
+
+-- question 7
+SELECT SUM(pay.amount), city.city FROM city 
+LEFT JOIN address add
+ON add.city_id = city.city_id
+LEFT JOIN customer c
+ON add.address_id = c.address_id
+LEFT JOIN payment pay
+ON pay.customer_id = c.customer_id
+WHERE pay.amount is not null
+GROUP BY 2
+ORDER BY 1 desc
+
+-- question 8
+SELECT country.country, city.city, SUM(pay.amount) FROM city 
+LEFT JOIN address add
+ON add.city_id = city.city_id
+LEFT JOIN customer c
+ON add.address_id = c.address_id
+LEFT JOIN payment pay
+ON pay.customer_id = c.customer_id
+LEFT JOIN country
+ON city.country_id = country.country_id
+WHERE pay.amount is not null
+GROUP BY 1, 2
+ORDER BY 3 
+
+-- question 9
+SELECT ROUND(AVG(amount_per_c), 2), staff_id
+FROM
+(SELECT SUM(amount) as amount_per_c, customer_id, staff_id FROM payment
+GROUP BY 2, 3) as avg_c
+GROUP BY 2
+
+-- question 10
+SELECT ROUND(AVG(amount_per_s), 2) FROM
+(SELECT SUM(amount) as amount_per_s, DATE(payment_date) FROM payment
+WHERE CAST(TO_CHAR(payment_date, 'D') AS integer) = 1
+GROUP BY 2) amount_per
+
+-- question 11
+SELECT f1.title, f1.length, f1.replacement_cost FROM film as f1
+WHERE f1.length > 
+(SELECT AVG(length) FROM film f2 where f1.replacement_cost = f2.replacement_cost)
+order by 2
+
+
+-- question 12
+SELECT add.district, ROUND(SUM(amount) / (SELECT COUNT(*) FROM address
+WHERE district = add.district), 2) FROM payment pay
+LEFT JOIN customer cust
+ON cust.customer_id = pay.customer_id
+LEFT JOIN address add
+ON cust.address_id = add.address_id
+GROUP BY 1
+ORDER BY 2 DESC
+	
+
+-- question 13
+SELECT pay.payment_id, pay.amount, cat.name, SUM(pay.amount)
+FROM payment pay
+LEFT JOIN rental rent
+ON pay.customer_id = rent.customer_id
+LEFT JOIN inventory inv
+ON rent.inventory_id = inv.inventory_id
+LEFT JOIN film 
+ON film.film_id = inv.film_id
+LEFT JOIN film_category film_c
+ON film_c.film_id = film.film_id
+LEFT JOIN category cat
+ON cat.category_id = film_c.category_id
+GROUP BY 1,2,3
+ORDER BY 3 asc
+
+
+SELECT * FROM film_category
+
+
+
