@@ -1,0 +1,57 @@
+UPDATE film 
+SET rental_rate = 1.99
+WHERE rental_rate = 0.99
+
+ALTER TABLE customer
+ADD COLUMN initials varchar(10)
+
+SELECT * FROM customer
+
+UPDATE customer
+SET initials = initials || '.' 
+
+DELETE FROM payment
+WHERE payment_id IN (17064, 17067)
+
+
+CREATE TABLE customer_spending
+AS
+SELECT cus.first_name || ' ' || cus.last_name as name, SUM(pay.amount) as total_amount FROM customer cus
+LEFT JOIN payment pay
+ON cus.customer_id = pay.customer_id
+GROUP BY 1
+
+
+CREATE VIEW films_category
+AS
+SELECT title, length, cat.name FROM film 
+LEFT JOIN film_category film_c
+ON film.film_id = film_c.film_id
+LEFT JOIN category cat
+ON film_c.category_id = cat.category_id
+WHERE cat.name IN ('Action', 'Comedy')
+ORDER BY 2 DESC
+
+DROP VIEW films_category
+
+
+SELECT film.film_id, title, length, cat.name, ROUND(AVG(length) OVER(PARTITION BY cat.name),2) 
+FROM film 
+LEFT JOIN film_category film_c
+ON film.film_id = film_c.film_id
+LEFT JOIN category cat
+ON film_c.category_id = cat.category_id
+ORDER BY 1
+
+SELECT *, COUNT(*) OVER(PARTITION BY customer_id, amount) FROM payment
+ORDER BY 1
+
+SELECT SUM(amount), DATE(payment_date), LAG(SUM(amount)) OVER(ORDER BY DATE(payment_date)) as previous_day,
+SUM(amount) - LAG(SUM(amount)) OVER(ORDER BY DATE(payment_date)) as difference
+FROM payment
+GROUP BY 2
+ORDER BY 2
+
+
+
+
