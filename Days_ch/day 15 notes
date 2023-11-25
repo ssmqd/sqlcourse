@@ -22,7 +22,5 @@ SELECT *
  
 SELECT column_name FROM information_schema.columns where table_name = 'payment'
 
-SELECt *
-
 
 
