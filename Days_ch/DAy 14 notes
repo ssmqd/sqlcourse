@@ -1,0 +1,26 @@
+CREATE PROCEDURE change (emp_id1 int, emp_id2 int)
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+sal1 decimal(12,2);
+sal2 decimal(12,2);
+BEGIN
+SELECT salary INTO sal1 FROM employees WHERE emp_id = emp_id1;
+SELECT salary INTO sal2 FROM employees WHERE emp_id = emp_id2;
+UPDATE employees SET salary = sal1
+WHERE emp_id = emp_id2;
+UPDATE employees SET salary = sal2
+WHERE emp_id = emp_id1;
+COMMIT;
+END;
+$$
+DROP PROCEDURE change(emp_id1 int, emp_id2 int)
+COMMIT
+
+SELECT * FROM employees
+ORDER BY 1
+
+ROLLBACK;
+
+CALL change(1,2)

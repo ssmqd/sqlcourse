@@ -1,0 +1,28 @@
+CREATE USER mia
+WITH PASSWORD 'mia123'
+
+CREATE ROLE analyst_emp
+
+
+GRANT SELECT 
+ON ALL TABLES IN SCHEMA public
+TO analyst_emp to mia
+
+GRANT UPDATE
+ON TABLE employees
+TO analyst_emp
+
+ALTER ROLE analyst_emp CREATEDB
+
+GRANT analyst_emp to mia
+
+SELECT *
+  FROM information_schema.role_table_grants 
+ WHERE grantee = 'mia';
+ 
+SELECT column_name FROM information_schema.columns where table_name = 'payment'
+
+SELECt *
+
+
+
