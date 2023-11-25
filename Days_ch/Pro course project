@@ -1,0 +1,155 @@
+CREATE TABLE employee (
+	emp_id INTEGER PRIMARY KEY,
+	first_name varchar(50) NOT NULL,
+	last_name varchar(50) NOT NULL,
+	job_position varchar(100) NOT NULL,
+	salary numeric(8,2),
+	start_date date NOT NULL,
+	birth_date date NOT NULL,
+	store_id integer,
+	departament_id integer,
+	manager_id integer
+)
+
+DROP TABLE employee
+
+CREATE TABLE departaments (
+	departament_id INTEGER PRIMARY KEY NOT NULL,
+	departament varchar(100),
+	division varchar(100)
+)
+
+ALTER TABLE employee
+ALTER COLUMN emp_id DROP DEFAULT
+
+ALTER TABLE employee
+ADD CONSTRAINT birth_check CHECK(birth_date < CURRENT_DATE)
+
+ALTER TABLE employee
+RENAME job_position TO position_title
+
+SELECT * FROM employee
+WHERE first_name = 'Jack'
+
+SELECT * FROM  departaments
+INSERT INTO departaments VALUES 
+(1,'Analytics', 'IT'),
+(2,'Finance', 'Administration'),
+(3,'Sales', 'Sales'),
+(4,'Website', 'IT'),
+(5,'Back Office', 'Administration')
+
+UPDATE employee SET salary = 7200
+WHERE first_name = 'Jack'
+
+UPDATE employee SET position_title = 'Customer Specialist'
+WHERE position_title = 'Customer Support'
+
+SELECT position_title, ROUND(AVG(salary),2) FROM employee
+WHERE position_title = 'SQL Analyst'
+GROUP BY 1
+
+CREATE VIEW v_employess_info as
+SELECT *, first_name || ' ' || last_name as menager, 
+CASE
+WHEN end_date is not null THEN 'false'
+ELSE 'true'
+END as is_active
+FROM employee
+
+SELECT * FROM v_employess_info
+
+SELECT 
+	dep.departament, 
+	ROUND(AVG(salary),2) 
+FROM employee emp
+LEFT JOIN departaments dep
+	ON dep.departament_id = emp.departament_id
+GROUP BY 1
+
+
+SELECT position_title, ROUND(AVG(salary),2) FROM employee
+GROUP BY 1
+
+-- question 8.1
+SELECT emp_id, first_name, last_name, position_title, salary, ROUND(AVG(salary) OVER(PARTITION BY position_title), 2) FROM employee
+ORDER BY 1
+
+-- question 8.2
+SELECT COUNT(*) FROM (SELECT emp_id, first_name, last_name, position_title, salary, ROUND(AVG(salary) OVER(PARTITION BY position_title), 2) as avg_salary FROM employee
+ORDER BY 1) as sal
+WHERE avg_salary > salary
+
+-- question 9
+SELECT emp_id, salary, start_date, ROUND(SUM(salary) OVER(ORDER BY start_date), 2) FROM employee
+GROUP BY 1,2,3
+ORDER BY 3
+
+-- question 11
+SELECT first_name, position_title, salary FROM employee emp
+WHERE salary = (SELECT MAX(salary) FROM employee epm1 WHERE epm1.position_title = emp.position_title)
+
+
+-- question 11.2
+SELECT first_name, 
+position_title, 
+salary, 
+(SELECT ROUND(AVG(salary),2) FROM employee emp3
+WHERE emp.position_title = emp3.position_title) 
+FROM employee emp
+WHERE salary = (SELECT MAX(salary) FROM employee epm1 WHERE epm1.position_title = emp.position_title)
+AND salary != (SELECT ROUND(AVG(salary),2) FROM employee emp3 WHERE emp.position_title = emp3.position_title) 
+
+
+SELECT position_title, AVG(salary) OVER(PARTITION BY position_title) FROM employee emp3
+WHERE emp3.position_title = 'SQL Analyst'
+
+-- question 12
+SELECT 
+	division, 
+	departament, 
+	position_title, 
+	SUM(salary), 
+	COUNT(*),
+	ROUND(AVG(salary),2)
+FROM departaments dep
+LEFT JOIN employee emp
+ON dep.departament_id = emp.departament_id
+GROUP BY
+	ROLLUP (division, departament, position_title)
+ORDER BY 1, 2, 3
+
+
+-- question 13
+SELECT
+	emp_id,
+	position_title,
+	departament,
+	salary,
+	RANK() OVER(ORDER BY salary desc)
+FROM employee 
+NATURAL JOIN departaments
+WHERE departament = 'Analytics'
+
+-- question 14
+
+SELECT * FROM 
+(SELECT
+	emp_id,
+	position_title,
+	departament,
+	salary,
+	RANK() OVER(PARTITION BY departament ORDER BY salary desc) as rank
+FROM employee
+NATURAL JOIN departaments) rnk
+WHERE rank = 1
+
+
+
+
+
+
+
+
+
+

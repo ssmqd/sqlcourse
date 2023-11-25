@@ -1,0 +1,43 @@
+SELECT 
+	first_name, 
+	last_name, 
+	staff_id, 
+	SUM(amount),
+	ROUND(SUM(amount) / (SELECT SUM(amount) FROM payment pay
+	LEFT JOIN customer cus1
+		ON cus1.customer_id = pay.customer_id
+	WHERE cus.first_name = cus1.first_name and cus.last_name = cus1.last_name
+	GROUP BY
+		GROUPING SETS (
+		(first_name, last_name))
+	ORDER BY first_name, last_name) * 100,2)
+FROM payment pay
+LEFT JOIN customer cus
+ON cus.customer_id = pay.customer_id
+GROUP BY
+	GROUPING SETS (
+	(first_name, last_name),
+	(first_name, 
+	last_name, staff_id))
+ORDER BY 1
+
+
+SELECT 
+	first_name, 
+	last_name, 
+	staff_id, 
+	SUM(amount),
+	ROUND(SUM(amount) / FIRST_VALUE(SUM(amount)) OVER(PARTITION BY first_name, last_name ORDER BY SUM(amount) DESC) * 100, 2)
+FROM payment pay
+LEFT JOIN customer cus
+ON cus.customer_id = pay.customer_id
+GROUP BY
+	GROUPING SETS (
+	(first_name, last_name),
+	(first_name, 
+	last_name, staff_id))
+ORDER BY 1
+
+
+
+
